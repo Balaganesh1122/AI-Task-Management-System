@@ -35,24 +35,32 @@ def create_user(db: Session, user):
     return db_user
 
 
-def login_user(db: Session, email: str, password: str):
-    # Find user by email
+def login_user(db, email: str, password: str):
+
+
+
     user = db.query(User).filter(User.email == email).first()
 
+
+
     if not user:
+        print("User does not exist")
         return None
 
-    # Verify password
-    if not verify_password(password, user.password):
+
+    is_valid = verify_password(password, user.password)
+
+
+    if not is_valid:
         return None
 
-    # Generate JWT token
     token = create_access_token(
         {
             "sub": user.email,
             "role": user.role
         }
     )
+
 
     return {
         "access_token": token,
