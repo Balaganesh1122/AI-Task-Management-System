@@ -1,7 +1,17 @@
+import json
+from typing import Optional
+from uuid import UUID
+
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.task import Task
+from app.utils.redis_client import redis_client
 
+
+# ----------------------------
+# CREATE TASK
+# ----------------------------
 
 def create_task(db: Session, task):
 
@@ -19,11 +29,15 @@ def create_task(db: Session, task):
     db.commit()
     db.refresh(db_task)
 
+    # Clear cache whenever data changes
+    redis_client.delete("task_list")
+
     return db_task
 
-from typing import Optional
-from uuid import UUID
 
+# ----------------------------
+# GET ALL TASKS (WITH REDIS CACHE)
+# ----------------------------
 
 def get_tasks(
     db: Session,
@@ -32,6 +46,18 @@ def get_tasks(
     assigned_to: Optional[UUID] = None,
     project_id: Optional[UUID] = None,
 ):
+
+    # Cache only when no filters are used
+    if (
+        status is None
+        and priority is None
+        and assigned_to is None
+        and project_id is None
+    ):
+        cached_tasks = redis_client.get("task_list")
+
+        if cached_tasks:
+            return json.loads(cached_tasks)
 
     query = db.query(Task).filter(Task.is_deleted == False)
 
@@ -47,9 +73,44 @@ def get_tasks(
     if project_id:
         query = query.filter(Task.project_id == project_id)
 
-    return query.all()
+    tasks = query.all()
 
-from fastapi import HTTPException
+    task_data = []
+
+    for task in tasks:
+        task_data.append(
+            {
+                "id": str(task.id),
+                "title": task.title,
+                "description": task.description,
+                "priority": task.priority,
+                "status": task.status,
+                "due_date": str(task.due_date) if task.due_date else None,
+                "assigned_to": str(task.assigned_to) if task.assigned_to else None,
+                "project_id": str(task.project_id) if task.project_id else None,
+                "is_deleted": task.is_deleted,
+            }
+        )
+
+    # Cache only unfiltered task list
+    if (
+        status is None
+        and priority is None
+        and assigned_to is None
+        and project_id is None
+    ):
+        redis_client.setex(
+            "task_list",
+            60,
+            json.dumps(task_data)
+        )
+
+    return task_data
+
+
+# ----------------------------
+# GET TASK BY ID
+# ----------------------------
 
 def get_task_by_id(db: Session, task_id):
 
@@ -65,6 +126,11 @@ def get_task_by_id(db: Session, task_id):
         )
 
     return task
+
+
+# ----------------------------
+# UPDATE TASK
+# ----------------------------
 
 def update_task(db: Session, task_id, task_data):
 
@@ -90,7 +156,15 @@ def update_task(db: Session, task_id, task_data):
     db.commit()
     db.refresh(task)
 
+    # Clear cache
+    redis_client.delete("task_list")
+
     return task
+
+
+# ----------------------------
+# SOFT DELETE TASK
+# ----------------------------
 
 def delete_task(db: Session, task_id):
 
@@ -109,9 +183,17 @@ def delete_task(db: Session, task_id):
 
     db.commit()
 
+    # Clear cache
+    redis_client.delete("task_list")
+
     return {
         "message": "Task deleted successfully"
     }
+
+
+# ----------------------------
+# UPDATE TASK STATUS
+# ----------------------------
 
 def update_task_status(db: Session, task_id, status_data):
 
@@ -130,6 +212,9 @@ def update_task_status(db: Session, task_id, status_data):
 
     db.commit()
     db.refresh(task)
+
+    # Clear cache
+    redis_client.delete("task_list")
 
     return {
         "message": "Task status updated successfully",
