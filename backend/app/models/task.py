@@ -4,7 +4,7 @@ from sqlalchemy import Column, String, Text, Date
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.database.base import Base
-
+from sqlalchemy import Column, String, Text, Date, Boolean
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -24,3 +24,5 @@ class Task(Base):
     assigned_to = Column(UUID(as_uuid=True))
 
     project_id = Column(UUID(as_uuid=True))
+
+    is_deleted = Column(Boolean, default=False)
