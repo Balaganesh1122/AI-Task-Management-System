@@ -14,6 +14,17 @@ from app.schemas.task import TaskUpdate
 from app.services.task_service import delete_task
 from app.schemas.task import TaskStatusUpdate
 from app.services.task_service import update_task_status
+from app.schemas.ai_task import TaskExtractionRequest
+from app.services.ai_service import extract_tasks_from_text
+from app.services.task_service import get_live_tracking
+from app.schemas.task import ManualAssignRequest
+from app.services.task_service import manual_assign_task
+from app.schemas.task import BulkCreateRequest
+from app.services.task_service import bulk_create_tasks
+from app.schemas.task import AutoAssignRequest
+from app.services.task_service import auto_assign_task
+from app.services.task_service import get_at_risk_tasks
+
 
 
 router = APIRouter(
@@ -102,3 +113,68 @@ def change_task_status(
         task_id,
         status
     )
+
+@router.post("/create-from-text")
+def create_tasks_from_text(
+    request: TaskExtractionRequest
+):
+
+    try:
+
+        extracted = extract_tasks_from_text(
+            request.text
+        )
+
+        return {
+            "message": "AI extraction successful",
+            "data": extracted
+        }
+
+    except Exception:
+
+        return {
+            "message": "AI module not available yet.",
+            "status": "Waiting for Deekshitha"
+        }
+    
+@router.get("/tracking/live")
+def live_tracking(
+db: Session = Depends(get_db)
+):
+
+    return get_live_tracking(db)
+
+@router.put("/{task_id}/manual-assign")
+def manual_assign(
+    task_id: UUID,
+    assignment: ManualAssignRequest,
+    db: Session = Depends(get_db)
+):
+
+    return manual_assign_task(
+        db,
+        task_id,
+        assignment
+    )
+
+@router.post("/bulk-create")
+def bulk_create(
+    request: BulkCreateRequest,
+    db: Session = Depends(get_db)
+):
+
+    return bulk_create_tasks(db, request)
+
+@router.post("/auto-assign")
+def auto_assign(
+    request: AutoAssignRequest,
+    db: Session = Depends(get_db)
+):
+    return auto_assign_task(db, request)
+
+@router.get("/at-risk")
+def at_risk_tasks(
+    db: Session = Depends(get_db)
+):
+
+    return get_at_risk_tasks(db)

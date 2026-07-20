@@ -220,3 +220,135 @@ def update_task_status(db: Session, task_id, status_data):
         "message": "Task status updated successfully",
         "task": task
     }
+
+from datetime import date
+
+
+def get_live_tracking(db: Session):
+
+    total = db.query(Task).filter(
+        Task.is_deleted == False
+    ).count()
+
+    pending = db.query(Task).filter(
+        Task.status == "Pending",
+        Task.is_deleted == False
+    ).count()
+
+    in_progress = db.query(Task).filter(
+        Task.status == "In Progress",
+        Task.is_deleted == False
+    ).count()
+
+    completed = db.query(Task).filter(
+        Task.status == "Completed",
+        Task.is_deleted == False
+    ).count()
+
+    overdue = db.query(Task).filter(
+        Task.due_date < date.today(),
+        Task.status != "Completed",
+        Task.is_deleted == False
+    ).count()
+
+    completion_rate = 0
+
+    if total > 0:
+        completion_rate = round(
+            (completed / total) * 100,
+            2
+        )
+
+    return {
+        "total_tasks": total,
+        "pending": pending,
+        "in_progress": in_progress,
+        "completed": completed,
+        "overdue": overdue,
+        "completion_rate": completion_rate
+    }
+
+from fastapi import HTTPException
+
+
+def manual_assign_task(
+    db: Session,
+    task_id,
+    assignment
+):
+
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.is_deleted == False
+    ).first()
+
+    if not task:
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
+
+    task.assigned_to = assignment.assigned_to
+
+    db.commit()
+    db.refresh(task)
+
+    return {
+        "message": "Task assigned successfully",
+        "task": task,
+        "reason": assignment.reason
+    }
+
+def bulk_create_tasks(db: Session, request):
+
+    created_tasks = []
+
+    for item in request.tasks:
+
+        task = Task(
+            title=item.title,
+            description=item.description,
+            priority=item.priority,
+            status=item.status,
+            due_date=item.due_date,
+            assigned_to=item.assigned_to,
+            project_id=item.project_id
+        )
+
+        db.add(task)
+        created_tasks.append(task)
+
+        db.commit()
+
+        for task in created_tasks:
+            db.refresh(task)
+
+        return {
+            "message": f"{len(created_tasks)} tasks created successfully",
+            "tasks": created_tasks
+        }
+    
+def auto_assign_task(db: Session, request):
+
+    task = db.query(Task).filter(
+        Task.id == request.task_id,
+        Task.is_deleted == False
+    ).first()
+
+    if not task:
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
+
+    return {
+        "message": "Waiting for Vaibhav's AllocationScorer integration.",
+        "task_id": str(task.id)
+    }
+
+def get_at_risk_tasks(db: Session):
+
+    return {
+        "message": "Waiting for Vaibhav's Delay Prediction Model.",
+        "at_risk_tasks": []
+    }
