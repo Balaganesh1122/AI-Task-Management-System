@@ -27,6 +27,11 @@ from app.services.task_service import get_at_risk_tasks
 from fastapi import Query
 from app.services.task_service import search_tasks
 from app.services.task_service import get_task_history
+from app.services.task_service import get_overdue_tasks
+from app.schemas.task import EscalationRequest
+from app.services.task_service import escalate_task
+from app.services.task_service import get_overdue_predictions
+
 
 router = APIRouter(
     prefix="/api/tasks",
@@ -195,3 +200,31 @@ def task_history(
 ):
 
     return get_task_history(db, task_id)
+
+
+@router.get("/overdue")
+def overdue_tasks(
+    db: Session = Depends(get_db)
+):
+
+    return get_overdue_tasks(db)
+
+@router.post("/{task_id}/escalate")
+def escalate(
+    task_id: UUID,
+    escalation: EscalationRequest,
+    db: Session = Depends(get_db)
+):
+
+    return escalate_task(
+        db,
+        task_id,
+        escalation
+    )
+
+@router.get("/overdue/predictions")
+def overdue_predictions(
+    db: Session = Depends(get_db)
+):
+
+    return get_overdue_predictions(db)

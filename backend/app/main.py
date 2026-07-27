@@ -11,6 +11,10 @@ from app.api.project import router as project_router
 from app.api.user import router as user_router
 from app.api.email import router as email_router
 from app.api.recommendation import router as recommendation_router
+from app.api.update import router as update_router
+from app.api.analytics import router as analytics_router
+from app.api.report import router as report_router
+from app.api.system import router as system_router
 
 
 app = FastAPI(
@@ -33,6 +37,14 @@ app.include_router(user_router)
 app.include_router(email_router)
 
 app.include_router(recommendation_router)
+
+app.include_router(update_router)
+
+app.include_router(analytics_router)
+
+app.include_router(report_router)
+
+app.include_router(system_router)
 
 
 @app.get("/")

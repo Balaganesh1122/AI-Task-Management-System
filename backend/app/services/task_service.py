@@ -8,6 +8,9 @@ from sqlalchemy.orm import Session
 from app.models.task import Task
 from app.utils.redis_client import redis_client
 from sqlalchemy import or_
+from datetime import date
+
+
 
 # ----------------------------
 # CREATE TASK
@@ -407,3 +410,104 @@ def get_task_history(db: Session, task_id):
             }
         ]
     }
+
+def get_overdue_tasks(db: Session):
+
+    tasks = db.query(Task).filter(
+        Task.is_deleted == False,
+        Task.status != "Done",
+        Task.due_date < date.today()
+    ).all()
+
+    response = []
+
+    for task in tasks:
+
+        overdue_days = (date.today() - task.due_date).days
+
+        if overdue_days <= 2:
+            risk = "Low"
+        elif overdue_days <= 5:
+            risk = "Medium"
+        else:
+            risk = "High"
+
+        response.append({
+            "task_id": str(task.id),
+            "title": task.title,
+            "status": task.status,
+            "due_date": task.due_date,
+            "overdue_days": overdue_days,
+            "risk_level": risk
+        })
+
+    return response
+
+def escalate_task(db: Session, task_id, escalation):
+
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.is_deleted == False
+    ).first()
+
+    if not task:
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
+
+    task.is_escalated = True
+    task.escalation_reason = escalation.reason
+
+    db.commit()
+    db.refresh(task)
+
+    return {
+        "message": "Task escalated successfully",
+        "task": task
+    }
+
+def get_overdue_predictions(db: Session):
+
+    tasks = db.query(Task).filter(
+        Task.is_deleted == False,
+        Task.status != "Done"
+    ).all()
+
+    predictions = []
+
+    today = date.today()
+
+    for task in tasks:
+
+        days_left = (task.due_date - today).days
+
+        if days_left <= 1:
+            risk = "High"
+            probability = 0.95
+
+        elif days_left <= 3:
+            risk = "Medium"
+            probability = 0.75
+
+        elif days_left <= 7:
+            risk = "Low"
+            probability = 0.40
+
+        else:
+            risk = "Minimal"
+            probability = 0.10
+
+        predictions.append(
+            {
+                "task_id": str(task.id),
+                "title": task.title,
+                "status": task.status,
+                "due_date": task.due_date,
+                "days_remaining": days_left,
+                "predicted_risk": risk,
+                "probability": probability
+            }
+        )
+
+    return predictions

@@ -49,3 +49,6 @@ class BulkCreateRequest(BaseModel):
 
 class AutoAssignRequest(BaseModel):
     task_id: UUID
+
+class EscalationRequest(BaseModel):
+    reason: str

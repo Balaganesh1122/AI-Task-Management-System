@@ -5,6 +5,8 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from app.database.base import Base
 from sqlalchemy import Column, String, Text, Date, Boolean
+from sqlalchemy import Boolean
+from sqlalchemy import Text
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -26,3 +28,7 @@ class Task(Base):
     project_id = Column(UUID(as_uuid=True))
 
     is_deleted = Column(Boolean, default=False)
+
+    is_escalated = Column(Boolean, default=False)
+
+    escalation_reason = Column(Text, nullable=True)
