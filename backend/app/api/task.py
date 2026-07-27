@@ -24,8 +24,9 @@ from app.services.task_service import bulk_create_tasks
 from app.schemas.task import AutoAssignRequest
 from app.services.task_service import auto_assign_task
 from app.services.task_service import get_at_risk_tasks
-
-
+from fastapi import Query
+from app.services.task_service import search_tasks
+from app.services.task_service import get_task_history
 
 router = APIRouter(
     prefix="/api/tasks",
@@ -178,3 +179,19 @@ def at_risk_tasks(
 ):
 
     return get_at_risk_tasks(db)
+
+@router.get("/search")
+def search_task(
+    query: str = Query(...),
+    db: Session = Depends(get_db)
+):
+
+    return search_tasks(db, query)
+
+@router.get("/{task_id}/history")
+def task_history(
+    task_id: UUID,
+    db: Session = Depends(get_db)
+):
+
+    return get_task_history(db, task_id)

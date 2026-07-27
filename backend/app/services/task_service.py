@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.models.task import Task
 from app.utils.redis_client import redis_client
-
+from sqlalchemy import or_
 
 # ----------------------------
 # CREATE TASK
@@ -195,6 +195,13 @@ def delete_task(db: Session, task_id):
 # UPDATE TASK STATUS
 # ----------------------------
 
+VALID_TRANSITIONS = {
+    "To Do": ["In Progress"],
+    "In Progress": ["Done"],
+    "Done": []
+}
+
+
 def update_task_status(db: Session, task_id, status_data):
 
     task = db.query(Task).filter(
@@ -208,13 +215,19 @@ def update_task_status(db: Session, task_id, status_data):
             detail="Task not found"
         )
 
-    task.status = status_data.status
+    current_status = task.status
+    new_status = status_data.status
+
+    if new_status not in VALID_TRANSITIONS.get(current_status, []):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid status transition from '{current_status}' to '{new_status}'"
+        )
+
+    task.status = new_status
 
     db.commit()
     db.refresh(task)
-
-    # Clear cache
-    redis_client.delete("task_list")
 
     return {
         "message": "Task status updated successfully",
@@ -351,4 +364,46 @@ def get_at_risk_tasks(db: Session):
     return {
         "message": "Waiting for Vaibhav's Delay Prediction Model.",
         "at_risk_tasks": []
+    }
+
+
+
+def search_tasks(db: Session, query: str):
+
+    tasks = db.query(Task).filter(
+        Task.is_deleted == False,
+        or_(
+            Task.title.ilike(f"%{query}%"),
+            Task.description.ilike(f"%{query}%")
+        )
+    ).all()
+
+    return tasks
+
+
+from fastapi import HTTPException
+
+
+def get_task_history(db: Session, task_id):
+
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.is_deleted == False
+    ).first()
+
+    if not task:
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
+
+    return {
+        "task_id": str(task.id),
+        "history": [
+            {
+                "event": "Task Created",
+                "status": task.status,
+                "timestamp": str(task.due_date)
+            }
+        ]
     }
