@@ -5,3 +5,4 @@ from app.models.assignment import Assignment
 from app.models.task_assignment import TaskAssignment
 from app.models.email_log import EmailLog
 from app.models.audit_trail import AuditTrail
+from app.models.recommendation import Recommendation
