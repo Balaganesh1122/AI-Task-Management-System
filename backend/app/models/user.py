@@ -22,3 +22,5 @@ class User(Base):
     skills = Column(String(255))
 
     workload_score = Column(Float, default=0.0)
+
+    password = Column(String(255), nullable=False)
