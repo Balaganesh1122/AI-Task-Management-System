@@ -15,9 +15,7 @@ COPY app ./app
 COPY migrations ./migrations
 COPY alembic.ini .
 
-# Fail the build early if any model can't load, rather than at first request.
-# Checks Timeline_Risk_model_FIXED.pkl (the corrected artifact ml_prediction_service.py
-# actually loads) alongside the original -- see VALIDATION_REPORT.md for why.
+
 RUN python -c "\
 import joblib; \
 [joblib.load(f'app/ml_models/{f}') for f in [ \

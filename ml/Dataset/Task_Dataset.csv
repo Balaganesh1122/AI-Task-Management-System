@@ -1,0 +1,101 @@
+Task_ID,Task_Name,Assigned_User,Priority,Complexity,Estimated_Hours,Actual_Hours,Delay_Days,Status,Team,Experience_Years,Bugs_Reported,Rework_Hours,Sprint
+2001,Authentication,Priya,Medium,High,43,43,0,Pending,Frontend,10,1,0,2
+2002,Reporting,Meena,High,Medium,60,58,0,In Progress,QA,12,5,1,8
+2003,Dashboard,Arjun,Critical,Low,40,47,7,In Progress,Data,1,0,1,4
+2004,Testing,Meena,Low,High,14,16,2,Pending,QA,5,6,0,7
+2005,API Development,Rahul,Critical,High,7,24,17,Pending,Backend,3,9,2,10
+2006,Dashboard,Arjun,High,Low,62,77,15,Pending,QA,10,1,3,4
+2007,ETL Pipeline,Meena,Critical,Medium,9,29,20,Delayed,Data,11,7,6,6
+2008,Dashboard,Rahul,Low,High,7,25,18,Completed,Data,6,4,0,2
+2009,API Development,Anita,Critical,Low,27,27,0,Delayed,Data,8,9,7,7
+2010,ETL Pipeline,Rahul,Low,Low,39,54,15,In Progress,QA,7,4,6,6
+2011,API Development,Vikas,Low,Medium,73,89,16,Completed,QA,4,7,1,10
+2012,Dashboard,Rahul,Low,Low,25,24,0,Completed,DevOps,2,10,4,10
+2013,Reporting,Meena,Medium,Low,41,48,7,In Progress,Backend,4,7,4,9
+2014,Authentication,Anita,Low,Low,63,82,19,In Progress,Data,7,9,5,3
+2015,API Development,Anita,Critical,Medium,9,14,5,Pending,DevOps,9,0,3,5
+2016,Testing,Sneha,Low,High,56,58,2,In Progress,DevOps,8,10,0,3
+2017,Testing,Vikas,High,High,59,67,8,Delayed,QA,3,8,3,3
+2018,Reporting,Rahul,Critical,Low,60,69,9,Completed,DevOps,8,10,7,3
+2019,Reporting,Anita,High,Medium,72,77,5,Delayed,Data,4,7,7,9
+2020,Testing,Sneha,High,Low,27,44,17,In Progress,DevOps,3,10,5,8
+2021,Testing,Priya,Low,Low,75,87,12,In Progress,Backend,2,3,7,10
+2022,API Development,Arjun,High,Low,17,24,7,In Progress,Data,6,6,6,1
+2023,Reporting,Anita,High,High,23,43,20,Delayed,Backend,5,8,0,5
+2024,API Development,Meena,High,Low,30,33,3,Completed,DevOps,2,9,5,9
+2025,API Development,Vikas,Medium,Low,41,52,11,In Progress,Frontend,9,2,1,6
+2026,Reporting,Kiran,Low,High,5,19,14,Pending,Backend,12,9,3,4
+2027,Authentication,Anita,High,High,40,45,5,In Progress,DevOps,2,0,5,5
+2028,Reporting,Rahul,High,Medium,4,14,10,Pending,Data,12,0,0,1
+2029,Reporting,Arjun,Medium,High,27,26,0,Delayed,Backend,5,5,7,2
+2030,Dashboard,Priya,Medium,High,41,56,15,Completed,DevOps,1,5,4,1
+2031,API Development,Kiran,High,Medium,15,17,2,Completed,QA,10,7,5,8
+2032,API Development,Sneha,Critical,High,72,82,10,Completed,DevOps,9,5,7,10
+2033,Testing,Vikas,Critical,Low,8,8,0,Pending,Frontend,5,2,0,7
+2034,Authentication,Vikas,Low,High,58,76,18,Pending,QA,8,7,6,3
+2035,Authentication,Kiran,High,Low,64,83,19,In Progress,Backend,3,1,6,2
+2036,Testing,Priya,High,Low,67,65,0,In Progress,Backend,12,4,5,7
+2037,Testing,Priya,Critical,Low,66,73,7,Delayed,Backend,12,9,1,7
+2038,Testing,Meena,Medium,Medium,74,86,12,Pending,QA,3,0,7,4
+2039,API Development,Kiran,Critical,High,71,77,6,Pending,Backend,10,0,1,10
+2040,Reporting,Meena,Critical,Medium,68,78,10,Delayed,Backend,9,5,2,3
+2041,ETL Pipeline,Vikas,High,Low,18,23,5,Pending,Backend,5,2,1,10
+2042,ETL Pipeline,Meena,Medium,Medium,11,31,20,Delayed,Backend,3,10,5,7
+2043,Testing,Arjun,Low,Medium,57,67,10,Completed,Data,11,9,3,8
+2044,Reporting,Anita,High,Low,40,45,5,Delayed,DevOps,1,8,8,5
+2045,Reporting,Sneha,High,High,17,18,1,Completed,DevOps,7,10,0,6
+2046,Testing,Priya,High,Medium,24,26,2,In Progress,Frontend,8,0,5,5
+2047,Testing,Rahul,Low,High,73,76,3,In Progress,Backend,3,10,7,9
+2048,Dashboard,Rahul,Medium,Medium,36,35,0,Pending,QA,8,2,3,10
+2049,Reporting,Anita,High,High,4,21,17,Completed,Backend,3,2,8,10
+2050,ETL Pipeline,Rahul,High,Medium,44,58,14,In Progress,Backend,1,3,8,5
+2051,ETL Pipeline,Vikas,Critical,High,56,55,0,Delayed,Data,11,0,5,10
+2052,Authentication,Priya,Critical,High,75,80,5,Pending,Backend,4,7,3,1
+2053,API Development,Priya,High,High,13,11,0,In Progress,QA,5,6,5,10
+2054,Reporting,Anita,High,Low,71,89,18,Delayed,Data,6,0,4,1
+2055,Dashboard,Priya,Critical,Low,35,41,6,Delayed,Backend,1,3,7,1
+2056,Authentication,Meena,High,Medium,17,28,11,In Progress,Data,11,6,3,8
+2057,Testing,Kiran,Low,Medium,73,77,4,In Progress,Data,12,10,2,5
+2058,Testing,Anita,Low,Medium,8,9,1,In Progress,Data,3,7,8,4
+2059,ETL Pipeline,Anita,Critical,Medium,6,22,16,In Progress,DevOps,7,3,0,9
+2060,API Development,Kiran,High,Medium,57,69,12,Pending,Backend,10,4,6,8
+2061,API Development,Rahul,Medium,Low,15,16,1,Delayed,Backend,2,6,8,5
+2062,Testing,Vikas,Low,High,5,3,0,Delayed,Data,11,4,5,7
+2063,Dashboard,Rahul,Low,High,29,42,13,Completed,Data,10,5,1,10
+2064,Authentication,Arjun,Critical,High,49,50,1,In Progress,Backend,3,8,5,8
+2065,API Development,Kiran,Medium,Low,68,67,0,Completed,Backend,3,9,8,7
+2066,Dashboard,Priya,High,High,60,68,8,Completed,DevOps,8,6,1,10
+2067,ETL Pipeline,Priya,High,Low,22,30,8,Completed,DevOps,11,2,4,1
+2068,Testing,Vikas,High,Low,60,80,20,Delayed,QA,9,3,2,3
+2069,Reporting,Priya,Low,High,63,76,13,In Progress,Backend,8,0,8,3
+2070,Testing,Priya,Medium,Medium,43,62,19,Pending,Frontend,8,1,3,2
+2071,ETL Pipeline,Priya,Critical,High,66,72,6,Completed,Frontend,8,3,3,5
+2072,Authentication,Arjun,Low,Low,30,48,18,Delayed,Frontend,6,3,6,4
+2073,Testing,Kiran,High,High,4,4,0,Completed,QA,10,1,6,6
+2074,API Development,Priya,High,Medium,59,59,0,Completed,Backend,10,9,2,3
+2075,Testing,Arjun,Critical,Low,35,52,17,Completed,Data,5,4,8,3
+2076,Testing,Vikas,High,Low,57,60,3,Pending,DevOps,4,7,7,9
+2077,Dashboard,Kiran,Medium,Low,52,59,7,Pending,Backend,9,2,1,5
+2078,ETL Pipeline,Anita,Low,Medium,79,93,14,Completed,Backend,10,3,1,5
+2079,Testing,Priya,Medium,Low,14,23,9,Pending,QA,1,9,1,5
+2080,Testing,Sneha,Critical,Low,76,89,13,Completed,QA,2,6,7,4
+2081,Testing,Priya,Medium,Low,49,48,0,Delayed,DevOps,7,3,8,1
+2082,API Development,Kiran,High,Medium,60,65,5,Delayed,QA,2,5,8,7
+2083,API Development,Sneha,Critical,High,28,30,2,Completed,DevOps,2,3,1,10
+2084,ETL Pipeline,Rahul,Critical,Medium,9,14,5,In Progress,Backend,11,7,5,6
+2085,Reporting,Meena,Medium,Low,16,14,0,Completed,QA,8,1,5,7
+2086,Authentication,Meena,Medium,Medium,58,69,11,In Progress,Data,10,9,4,6
+2087,API Development,Kiran,High,Low,53,51,0,Pending,Backend,2,1,2,2
+2088,Testing,Priya,Low,Medium,22,32,10,In Progress,DevOps,4,9,1,7
+2089,Reporting,Arjun,High,High,8,20,12,Pending,DevOps,2,3,3,2
+2090,ETL Pipeline,Sneha,Critical,Medium,65,70,5,Completed,Frontend,2,10,3,8
+2091,API Development,Vikas,Critical,Low,32,49,17,In Progress,DevOps,8,4,3,2
+2092,Dashboard,Sneha,Medium,Medium,61,77,16,Delayed,Backend,9,9,5,2
+2093,ETL Pipeline,Vikas,Critical,Medium,15,20,5,Pending,Frontend,3,1,6,8
+2094,Authentication,Vikas,Critical,Low,46,46,0,Delayed,Data,8,5,3,3
+2095,Testing,Anita,Medium,Medium,80,100,20,Completed,QA,7,10,7,6
+2096,API Development,Sneha,Low,Medium,37,50,13,Pending,DevOps,10,6,2,10
+2097,API Development,Kiran,Critical,Medium,67,85,18,Completed,Data,7,3,3,6
+2098,Dashboard,Kiran,High,Low,55,60,5,Pending,DevOps,1,5,1,3
+2099,ETL Pipeline,Priya,Low,Medium,42,47,5,Completed,DevOps,8,3,5,9
+2100,Dashboard,Rahul,High,High,21,31,10,Completed,Data,3,5,4,10
