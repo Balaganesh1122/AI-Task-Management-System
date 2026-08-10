@@ -1,0 +1,26 @@
+# Pinned to versions verified against the actual trained .pkl files.
+# scikit-learn==1.7.2 specifically matches the training environment -- a newer
+# version throws InconsistentVersionWarning and risks invalid predictions from
+# allocation_scorer.pkl (a RandomForestClassifier). Do not bump without
+# re-validating against the pkls (see VALIDATION_REPORT.md).
+#
+# NOTE for local Windows dev without build tools: psycopg2-binary can fail to
+# build on some Windows/Python combos (missing pg_config). If that happens,
+# drop psycopg2-binary and alembic from this file locally -- your app's own
+# requirements.txt likely already provides a working Postgres driver. This
+# full version is intended for the Docker build, where gcc + libpq-dev
+# (installed in the Dockerfile) make the build reliable.
+
+fastapi==0.141.1
+uvicorn[standard]==0.52.1
+sqlalchemy==2.0.51
+pydantic==2.13.4
+psycopg2-binary==2.9.10
+alembic==1.13.2
+
+# ML stack
+scikit-learn==1.7.2
+xgboost==2.1.4
+numpy==2.4.4
+pandas==3.0.2
+joblib==1.5.3
