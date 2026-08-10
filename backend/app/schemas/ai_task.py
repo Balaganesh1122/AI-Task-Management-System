@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -14,6 +16,7 @@ class ExtractedTask(BaseModel):
 
 class TaskExtractionResponse(BaseModel):
     tasks: list[ExtractedTask]
+
 
 class AutoAssignRequest(BaseModel):
     task_id: UUID
