@@ -1,61 +1,181 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import TaskDetails from '../TaskDetails';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { render, screen, fireEvent } from "../../test-utils";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import TaskDetails from "../TaskDetails";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import api from "../../services/axios";
 
-vi.mock('../../data/dummyData', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('../../data/dummyData')>();
-  return {
-    ...mod,
-    tasks: [
-      { id: '1', title: 'Test Task Title', description: 'Test Description', assignee: 'Alice', status: 'Pending', priority: 'High', tags: [], dueDate: '2026-10-10', createdDate: '2026-10-01', department: 'Engineering' }
-    ]
-  };
-});
+vi.mock("../../services/axios", () => ({
+  default: {
+    get: vi.fn(),
+    put: vi.fn(),
+    patch: vi.fn(),
+  },
+}));
 
 // Mock ResizeObserver
 window.ResizeObserver = class {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+  observe() {}
+  unobserve() {}
+  disconnect() {}
 };
 
-describe('TaskDetails Component', () => {
+describe("TaskDetails Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    (api.get as any).mockImplementation((url: string) => {
+      // Task details API
+      if (url === "/tasks/1") {
+        return Promise.resolve({
+          data: {
+            id: "1",
+            title: "Test Task Title",
+            description: "Test Description",
+            assignee: "Alice",
+            assigneeAvatar: "",
+            status: "Pending",
+            priority: "High",
+            tags: [],
+            dueDate: "2026-10-10",
+            createdDate: "2026-10-01",
+            department: "Engineering",
+            progress: 20,
+            estimatedHours: 5,
+            comments: [],
+          },
+        });
+      }
+
+      // Timeline API
+      if (url === "/tasks/1/full-timeline") {
+        return Promise.resolve({
+          data: [],
+        });
+      }
+
+      return Promise.resolve({
+        data: [],
+      });
+    });
   });
 
-  it('toggles edit mode correctly', async () => {
+  it("toggles edit mode correctly", async () => {
     render(
-      <MemoryRouter initialEntries={['/tasks/1']}>
+      <MemoryRouter initialEntries={["/tasks/1"]}>
         <Routes>
-          <Route path="/tasks/:id" element={<TaskDetails />} />
+          <Route
+            path="/tasks/:id"
+            element={<TaskDetails />}
+          />
         </Routes>
       </MemoryRouter>
     );
 
-    // Initial state: not in edit mode
-    expect(screen.getByText('Test Task Title')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Edit Task/i })).toBeInTheDocument();
+    // =====================================================
+    // WAIT FOR TASK DATA
+    // =====================================================
 
-    // Click Edit Task
-    fireEvent.click(screen.getByRole('button', { name: /Edit Task/i }));
+    expect(
+      await screen.findByText("Test Task Title")
+    ).toBeInTheDocument();
 
-    // Now in edit mode
-    expect(screen.queryByRole('button', { name: /Edit Task/i })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Save Changes/i })).toBeInTheDocument();
+    // =====================================================
+    // INITIAL STATE
+    // =====================================================
 
-    // Title should be an input
-    const titleInput = screen.getByDisplayValue('Test Task Title');
+    expect(
+      screen.getByRole("button", {
+        name: /Edit Task/i,
+      })
+    ).toBeInTheDocument();
+
+    // =====================================================
+    // CLICK EDIT TASK
+    // =====================================================
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Edit Task/i,
+      })
+    );
+
+    // =====================================================
+    // EDIT MODE
+    // =====================================================
+
+    expect(
+      screen.queryByRole("button", {
+        name: /Edit Task/i,
+      })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", {
+        name: /Cancel/i,
+      })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", {
+        name: /Save Changes/i,
+      })
+    ).toBeInTheDocument();
+
+    // =====================================================
+    // TITLE BECOMES INPUT
+    // =====================================================
+
+    const titleInput =
+      screen.getByDisplayValue("Test Task Title");
+
     expect(titleInput).toBeInTheDocument();
 
-    // Change title and cancel
-    fireEvent.change(titleInput, { target: { value: 'New Task Title' } });
-    fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+    // =====================================================
+    // CHANGE TITLE
+    // =====================================================
 
-    // Edit mode cancelled, changes reverted
-    expect(screen.getByText('Test Task Title')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Edit Task/i })).toBeInTheDocument();
+    fireEvent.change(titleInput, {
+      target: {
+        value: "New Task Title",
+      },
+    });
+
+    expect(
+      screen.getByDisplayValue("New Task Title")
+    ).toBeInTheDocument();
+
+    // =====================================================
+    // CANCEL EDIT
+    // =====================================================
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Cancel/i,
+      })
+    );
+
+    // =====================================================
+    // VERIFY CHANGES WERE REVERTED
+    // =====================================================
+
+    expect(
+      screen.getByText("Test Task Title")
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByDisplayValue("New Task Title")
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", {
+        name: /Edit Task/i,
+      })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByRole("button", {
+        name: /Save Changes/i,
+      })
+    ).not.toBeInTheDocument();
   });
 });
