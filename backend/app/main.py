@@ -16,7 +16,7 @@ from app.api.update import router as update_router
 from app.api.analytics import router as analytics_router
 from app.api.report import router as report_router
 from app.api.system import router as system_router
-
+from app.api.ml_predictions import router as ml_predictions_router
 
 app = FastAPI(
     title="AI Task Management System",
@@ -59,6 +59,8 @@ app.include_router(analytics_router)
 app.include_router(report_router)
 
 app.include_router(system_router)
+
+app.include_router(ml_predictions_router)
 
 
 @app.get("/")
