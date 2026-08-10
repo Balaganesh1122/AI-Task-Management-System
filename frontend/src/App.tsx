@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Dashboard from "./pages/Dashboard";
 import TaskList from "./pages/TaskList";
 import TaskDetails from "./pages/TaskDetails";
@@ -8,6 +9,7 @@ import OverdueTasks from "./pages/OverdueTasks";
 import Reports from "./pages/Reports";
 import AIRecommendations from "./pages/AIRecommendations";
 import EmailLogs from "./pages/EmailLogs";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -23,6 +25,7 @@ function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/ai-recommendations" element={<AIRecommendations />} />
         <Route path="/email-logs" element={<EmailLogs />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );

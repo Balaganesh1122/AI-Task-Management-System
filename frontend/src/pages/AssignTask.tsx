@@ -57,11 +57,24 @@ export default function TaskAssignment() {
     setFeedback("");
 
     try {
-      await assignTaskMutation.mutateAsync({ taskId: task.id, assignee: member.name, assigneeId: member.id });
+      await assignTaskMutation.mutateAsync({
+        taskId: task.id,
+        assigneeId: member.id,
+        reason: "Manual assignment",
+      });
+
       setFeedback(`Assigned "${task.title}" to ${member.name}`);
+      await Promise.all([refetchUsers(), refetchTasks()]);
+
       setTimeout(() => setFeedback(""), 3000);
-    } catch {
-      setFeedback(`Failed to assign task.`);
+    } catch (error: any) {
+      const detail =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to assign task.";
+
+      setFeedback(`Failed to assign task: ${detail}`);
     }
   }
 
@@ -191,7 +204,7 @@ export default function TaskAssignment() {
                         <div className="space-y-1.5 text-xs text-[#6B7280]">
                           <div className="flex items-center gap-1.5">
                             <Zap size={11} className="text-purple-500" />
-                            <span>Workload: {suggested.workload}% — optimal capacity</span>
+                            <span>Workload: {suggested.workload}% â€” optimal capacity</span>
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Zap size={11} className="text-purple-500" />

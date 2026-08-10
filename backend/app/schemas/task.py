@@ -9,7 +9,7 @@ class TaskCreate(BaseModel):
     title: str
     description: str
     priority: str
-    status: str
+    status: str = "Pending"
     due_date: date
     assigned_to: Optional[UUID] = None
     project_id: Optional[UUID] = None

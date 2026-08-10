@@ -178,8 +178,14 @@ export default function TaskDetails() {
       };
       setTimeline((prev) => [statusEntry, ...prev]);
       setTimeout(() => setSaveMsg(""), 3000);
-    } catch (e) {
-      setSaveMsg("Failed to update status.");
+    } catch (e: any) {
+      const detail =
+        e?.response?.data?.detail ||
+        e?.response?.data?.message ||
+        e?.message ||
+        "Failed to update status.";
+
+      setSaveMsg(`Failed to update status: ${detail}`);
     }
   }
 
@@ -570,4 +576,3 @@ export default function TaskDetails() {
     </div>
   );
 }
-

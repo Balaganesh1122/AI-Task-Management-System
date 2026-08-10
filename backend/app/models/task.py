@@ -19,7 +19,7 @@ class Task(Base):
 
     priority = Column(String(20))
 
-    status = Column(String(30))
+    status = Column(String(30), nullable=False, default="Pending")
 
     due_date = Column(Date)
 

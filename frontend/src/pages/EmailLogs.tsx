@@ -59,11 +59,24 @@ export default function EmailLogs() {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<EmailLog[]>("/email-logs");
-      setLogs(response.data);
+      const response = await api.get<EmailLog[] | { logs?: EmailLog[] }>("/email/logs");
+
+      const data = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.logs)
+          ? response.data.logs
+          : [];
+
+      setLogs(data);
       setCurrentPage(1);
     } catch (err: any) {
-      setError(err?.message || "Failed to load email logs.");
+      const detail =
+        err?.response?.data?.detail ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load email logs.";
+
+      setError(detail);
       setLogs([]);
     } finally {
       setLoading(false);
@@ -111,23 +124,21 @@ export default function EmailLogs() {
       prev.map((l) => (l.id === showRetryConfirm.id ? { ...l, status: "Processing" } : l))
     );
     
-    try {
-      await api.post(`/email-logs/${showRetryConfirm.id}/retry`);
-      showNotification("Email resent successfully.");
-      setLogs((prev) =>
-        prev.map((l) => (l.id === showRetryConfirm.id ? { ...l, status: "Delivered", deliveryTime: "1.2 sec" } : l))
-      );
-    } catch (error) {
-      // Fallback
-      showNotification("Email resent successfully (offline fallback).");
-      setTimeout(() => {
-        setLogs((prev) =>
-          prev.map((l) => (l.id === showRetryConfirm.id ? { ...l, status: "Delivered", deliveryTime: "1.2 sec" } : l))
-        );
-      }, 2000);
-    } finally {
-      setShowRetryConfirm(null);
-    }
+    // The current backend exposes GET /api/email/logs and POST /api/email/send,
+    // but it does not expose a retry endpoint. Do not call a non-existent
+    // /api/email-logs/.../retry URL or report a fake successful retry.
+    setLogs((prev) =>
+      prev.map((l) =>
+        l.id === showRetryConfirm.id ? { ...l, status: "Pending" } : l
+      )
+    );
+
+    showNotification(
+      "Retry is not available yet: the backend has no email retry endpoint.",
+      "error"
+    );
+
+    setShowRetryConfirm(null);
   };
 
   const handleExport = (type: string) => {

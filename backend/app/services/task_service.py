@@ -199,9 +199,9 @@ def delete_task(db: Session, task_id):
 # ----------------------------
 
 VALID_TRANSITIONS = {
-    "To Do": ["In Progress"],
-    "In Progress": ["Done"],
-    "Done": []
+    "Pending": ["In Progress"],
+    "In Progress": ["Completed"],
+    "Completed": [],
 }
 
 
