@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Generated report files
+backend/generated_reports/
+*.xlsx
+*.pdf
+

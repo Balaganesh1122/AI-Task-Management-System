@@ -10,7 +10,9 @@ from app.utils.redis_client import redis_client
 from sqlalchemy import or_
 from datetime import date
 
-
+from app.models.user import User
+from app.models.assignment import Assignment
+from app.services.ml_prediction_service import predict_allocation
 
 # ----------------------------
 # CREATE TASK
@@ -199,8 +201,10 @@ def delete_task(db: Session, task_id):
 # ----------------------------
 
 VALID_TRANSITIONS = {
+    "To Do": ["In Progress"],
     "Pending": ["In Progress"],
-    "In Progress": ["Completed"],
+    "In Progress": ["Done", "Completed"],
+    "Done": [],
     "Completed": [],
 }
 
@@ -346,6 +350,10 @@ def bulk_create_tasks(db: Session, request):
     
 def auto_assign_task(db: Session, request):
 
+    # ------------------------------------------------------------
+    # 1. Get task
+    # ------------------------------------------------------------
+
     task = db.query(Task).filter(
         Task.id == request.task_id,
         Task.is_deleted == False
@@ -357,9 +365,108 @@ def auto_assign_task(db: Session, request):
             detail="Task not found"
         )
 
+    # ------------------------------------------------------------
+    # 2. Get users who can be assigned tasks
+    # ------------------------------------------------------------
+
+    users = db.query(User).all()
+
+    if not users:
+        raise HTTPException(
+            status_code=404,
+            detail="No users available for assignment"
+        )
+
+    # ------------------------------------------------------------
+    # 3. Score every user using AllocationScorer
+    # ------------------------------------------------------------
+
+    candidates = []
+
+    for user in users:
+
+        try:
+            prediction = predict_allocation(
+                db,
+                task.id,
+                user.id
+            )
+
+            candidates.append({
+                "user": user,
+                "prediction": prediction
+            })
+
+        except Exception as e:
+            print(
+                f"Allocation prediction failed "
+                f"for user {user.id}: {e}"
+            )
+
+        except Exception as e:
+            print(
+                f"Allocation prediction failed "
+                f"for user {user.id}: {e}"
+            )
+
+    if not candidates:
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to calculate allocation scores"
+        )
+
+    # ------------------------------------------------------------
+    # 4. Select the best candidate
+    # ------------------------------------------------------------
+
+    best_candidate = max(
+        candidates,
+        key=lambda item: item["prediction"]["allocation_score"]
+    )
+
+    selected_user = best_candidate["user"]
+    prediction = best_candidate["prediction"]
+
+    # ------------------------------------------------------------
+    # 5. Assign task
+    # ------------------------------------------------------------
+
+    task.assigned_to = selected_user.id
+
+    # ------------------------------------------------------------
+    # 6. Save assignment record
+    # ------------------------------------------------------------
+
+    assignment = Assignment(
+        task_id=task.id,
+        user_id=selected_user.id,
+        allocation_score=prediction["allocation_score"],
+        reason=prediction.get(
+            "message",
+            "Selected using ML allocation model"
+        )
+    )
+
+    db.add(assignment)
+
+    db.commit()
+
+    db.refresh(task)
+    db.refresh(assignment)
+
+    # ------------------------------------------------------------
+    # 7. Return result
+    # ------------------------------------------------------------
+
     return {
-        "message": "Waiting for Vaibhav's AllocationScorer integration.",
-        "task_id": str(task.id)
+        "message": "Task automatically assigned successfully",
+        "task_id": str(task.id),
+        "assigned_to": str(selected_user.id),
+        "employee_name": selected_user.name,
+        "allocation_score": prediction["allocation_score"],
+        "recommendation": prediction.get("recommendation"),
+        "assignment_id": str(assignment.id),
+        "reason": assignment.reason
     }
 
 def get_at_risk_tasks(db: Session):

@@ -32,7 +32,7 @@ def dashboard_summary(db: Session):
     completed_tasks = (
         db.query(Task)
         .filter(
-            Task.status == "Completed",
+            Task.status.in_(["Completed", "Done"]),
             Task.is_deleted == False
         )
         .count()
@@ -69,7 +69,7 @@ def dashboard_summary(db: Session):
     #
     # A task is overdue when:
     # 1. Due date is before today
-    # 2. Task is not completed
+    # 2. Task is not completed/done
     # 3. Task is not deleted
     # -----------------------------------------------------
 
@@ -77,7 +77,7 @@ def dashboard_summary(db: Session):
         db.query(Task)
         .filter(
             Task.due_date < date.today(),
-            Task.status != "Completed",
+            ~Task.status.in_(["Completed", "Done"]),
             Task.is_deleted == False
         )
         .count()
@@ -122,7 +122,7 @@ def productivity_report(db: Session):
             Task.assigned_to == User.id
         )
         .filter(
-            Task.status == "Completed",
+            Task.status.in_(["Completed", "Done"]),
             Task.is_deleted == False
         )
         .group_by(
@@ -181,7 +181,7 @@ def performance_report(db: Session):
             db.query(Task)
             .filter(
                 Task.assigned_to == user.id,
-                Task.status == "Completed",
+                Task.status.in_(["Completed", "Done"]),
                 Task.is_deleted == False
             )
             .count()
@@ -258,13 +258,15 @@ def risk_predictions(db: Session):
 
     # -----------------------------------------------------
     # Get active, non-completed tasks
+    #
+    # Both "Completed" and "Done" are terminal statuses.
     # -----------------------------------------------------
 
     tasks = (
         db.query(Task)
         .filter(
             Task.is_deleted == False,
-            Task.status != "Completed"
+            ~Task.status.in_(["Completed", "Done"])
         )
         .all()
     )

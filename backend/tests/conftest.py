@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 # Use the dedicated test database.
 TEST_DATABASE_URL = os.getenv(
     "TEST_DATABASE_URL",
-    "postgresql+psycopg2://postgres:YOUR_PASSWORD@localhost:5432/ai_task_management_test",
+    "postgresql+psycopg2://postgres:Gani%40123@localhost:5432/ai_task_management_test",
 )
 
 from app.main import app
